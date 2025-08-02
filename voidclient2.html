@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void Client</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2565e1;
+            --primary-dark: #1a4fb3;
+            --secondary: #3a86ff;
+            --accent: #00c6ff;
+            --dark: #0a0a1a;
+            --darker: #070712;
+            --light: #ffffff;
+            --light-gray: #f0f2f5;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Background with subtle blur */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.ibb.co/JWrHRV4K/c41375ca-f2b4-471f-8b33-1f8afbbcfd49.png') no-repeat center center;
+            background-size: cover;
+            filter: blur(4px) brightness(0.7);
+            z-index: -1;
+        }
+        
+        /* Modern header */
+        header {
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+            background: rgba(10, 10, 26, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: var(--transition);
+        }
+        
+        header.scrolled {
+            padding: 0.8rem 5%;
+            background: rgba(7, 7, 18, 0.95);
+            box-shadow: var(--shadow);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+        
+        .logo {
+            height: 3.5rem;
+            width: auto;
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--light);
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: var(--transition);
+            opacity: 0.9;
+        }
+        
+        nav a:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        
+        nav a.active {
+            color: var(--accent);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transition: var(--transition);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 5%;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding-top: 6rem;
+        }
+        
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            line-height: 1.2;
+        }
+        
+        .hero h1 strong {
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Features section */
+        .features {
+            padding: 6rem 5%;
+            background: rgba(10, 10, 26, 0.6);
+            backdrop-filter: blur(8px);
+            position: relative;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            font-weight: 600;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: rgba(20, 20, 40, 0.4);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(58, 134, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(58, 134, 255, 0.3);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+        
+        /* Download section */
+        .download {
+            padding: 6rem 5%;
+            text-align: center;
+            position: relative;
+        }
+        
+        .download-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            padding: 1.1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 1.5rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(37, 101, 225, 0.4);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 101, 225, 0.5);
+        }
+        
+        .download-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .version-info {
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* About and Support pages */
+        .page-section {
+            min-height: 100vh;
+            padding: 8rem 5% 4rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .page-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+        
+        .page-section p {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .page-section ul {
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+        }
+        
+        .page-section li {
+            margin-bottom: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 4rem 5% 2rem;
+            background: rgba(5, 5, 15, 0.95);
+            text-align: center;
+            border-top: 1px solid rgba(58, 134, 255, 0.1);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .social-links a:hover {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .opensource-notice {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .opensource-notice a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .opensource-notice a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 900px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            nav ul {
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem 5%;
+            }
+            
+            .logo {
+                height: 2.8rem;
+            }
+            
+            .logo-text {
+                font-size: 1.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            nav ul {
+                gap: 1rem;
+            }
+            
+            nav a {
+                font-size: 0.95rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .download-btn {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Page transitions */
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background with subtle blur -->
+    <div class="background"></div>
+    
+    <!-- Modern header -->
+    <header id="main-header">
+        <a href="#" class="logo-container" data-page="home">
+            <img src="https://i.ibb.co/LdRyksm7/voltclient2-1.png" alt="Void Client Logo" class="logo">
+            <span class="logo-text">Void Client</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="#" class="nav-link" data-page="home">Home</a></li>
+                <li><a href="#" class="nav-link" data-page="about">About</a></li>
+                <li><a href="#" class="nav-link" data-page="support">Support</a></li>
+                <li><a href="#download" class="nav-link" data-page="home">Download</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- Main content with page transitions -->
+    <main>
+        <!-- Home Page -->
+        <div class="page active" id="home-page">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Transform Your <strong>Minecraft Experience</strong></h1>
+                    <p>Void Client offers ultimate customization, performance enhancements, a mod marketplace, and unique features to take your gameplay to the next level.</p>
+                    <a href="#download" class="download-btn">
+                        <i class="fas fa-download"></i> Download Now
+                    </a>
+                </div>
+            </section>
+            
+            <section class="features">
+                <h2 class="section-title">Why Choose Void Client?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-paint-brush"></i>
+                        </div>
+                        <h3>Complete Customization</h3>
+                        <p>Tailor every aspect of your Minecraft UI with our extensive customization options.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3>Performance Boost</h3>
+                        <p>Optimized to deliver maximum FPS while maintaining beautiful visuals and effects.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <h3>Mod Marketplace</h3>
+                        <p>Browse and install mods directly from our marketplace for free and directly upload them to the client.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <h3>Media Tools</h3>
+                        <p>Built-in screenshot uploader tools with easy sharing options and downloads.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Friend System</h3>
+                        <p>Integrated friend system to easily connect and play with your friends across servers.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <h3>Sleek UI</h3>
+                        <p>Modern, intuitive interface designed for both beginners and advanced players.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="download" id="download">
+                <div class="download-content">
+                    <h2 class="section-title">Ready to Begin?</h2>
+                    <p>Join players who have already enhanced their Minecraft experience with Void Client.</p>
+                    <a href="https://github.com/voidclient/releases/latest" class="download-btn">
+                        <i class="fas fa-download"></i> Download Void Client
+                    </a>
+                    <div class="version-info">
+                        Version 2.1.4 | Compatible with Minecraft 1.8.9 - 1.20.1
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- About Page -->
+        <div class="page" id="about-page">
+            <section class="page-section">
+                <h2>About Void Client</h2>
+                <p>Void Client is a modern Minecraft client designed to enhance your gameplay experience with powerful customization options, performance improvements, a mod marketplace and a way to upload mods directly to the client, and unique features not found in the vanilla game.</p>
+                
+                <p>Our mission is to provide players with tools to make Minecraft truly their own, while maintaining the essence of what makes the game great. Whether you're a competitive player looking for performance gains or a creative player wanting more customization, Void Client has something for everyone.</p>
+                
+                <h3 style="margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem;">Key Features:</h3>
+                <ul>
+                    <li>Completely customizable HUD and GUI elements</li>
+                    <li>Built-in FPS optimization and performance monitoring</li>
+                    <li>Mod marketplace with one click uploading to the client</li>
+                    <li>Advanced screenshot and uploading tools</li>
+                    <li>Friend system to connect with other players</li>
+                    <li>Sleek, modern user interface</li>
+                    <li>Regular updates with new features and improvements</li>
+                    <li>Lightweight design that won't slow down your game</li>
+                </ul>
+                
+                <h3 style="margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem;">Our Team</h3>
+                <p>Void Client is developed by a small team of passionate Minecraft players and developers who want to create the best possible client for the community. We're always listening to feedback and working to improve the client.</p>
+            </section>
+        </div>
+        
+        <!-- Support Page -->
+        <div class="page" id="support-page">
+            <section class="page-section">
+                <h2>Support</h2>
+                <p>Need help with Void Client? Here are some resources to get you started.</p>
+                
+                <h3 style="margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem;">Frequently Asked Questions</h3>
+                <p><strong>Q: Is Void Client free to use?</strong><br>
+                A: Yes, we offer paid subscriptions as well as free to use perks as well. On top of this, we're open source.</p>
+                
+                <p><strong>Q: What versions of Minecraft does Void Client support?</strong><br>
+                A: We currently support Minecraft versions 1.8.9 through 1.20.1.</p>
+                
+                <p><strong>Q: Will using Void Client get me banned?</strong><br>
+                A: Void Client is designed to comply with Mojang's EULA. However, some servers may have rules against certain client modifications. Always check server rules before using any mods.</p>
+                
+                <p><strong>Q: How do I install mods from the marketplace?</strong><br>
+                A: Simply browse the marketplace in the website, click on a mod you want, and hit "Install". Simply just open the launcher and upload the mod to the client.</p>
+                
+                <h3 style="margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem;">Contact Us</h3>
+                <p>If you can't find the answer to your question, you can reach out to us through these channels:</p>
+                <ul>
+                    <li>Discord: <a href="https://discord.gg/voidclient" style="color: var(--accent);">https://discord.gg/voidclient</a></li>
+                    <li>Email: support@voidclient.net</li>
+                    <li>Twitter: <a href="https://twitter.com/voidclient" style="color: var(--accent);">@voidclient</a></li>
+                </ul>
+                
+                <h3 style="margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem;">Reporting Issues</h3>
+                <p>If you encounter any bugs or issues with Void Client, please report them on our discord server.</p>
+                <p><a href="https://github.com/voidclient/issues" style="color: var(--accent);">https://github.com/voidclient/issues</a></p>
+            </section>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="social-links">
+            <a href="https://discord.gg/voidclient"><i class="fab fa-discord"></i></a>
+            <a href="https://twitter.com/voidclient"><i class="fab fa-twitter"></i></a>
+            <a href="https://youtube.com/voidclient"><i class="fab fa-youtube"></i></a>
+            <a href="https://github.com/voidclient"><i class="fab fa-github"></i></a>
+        </div>
+        
+        <div class="footer-links">
+            <a href="#" data-page="home">Home</a>
+            <a href="#" data-page="about">About</a>
+            <a href="#" data-page="support">Support</a>
+            <a href="#download" data-page="home">Download</a>
+            <a href="https://github.com/voidclient">GitHub</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+        
+        <p class="copyright">© 2025 Void Client. Not affiliated with Mojang or Microsoft.</p>
+        <p class="opensource-notice">Void Client is open source. <a href="https://github.com/voidclient">View the source code</a>.</p>
+    </footer>
+    
+    <script>
+        // Handle page transitions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Header scroll effect
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+            
+            // Page navigation
+            const navLinks = document.querySelectorAll('.nav-link, .footer-links a, .logo-container');
+            const pages = document.querySelectorAll('.page');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetPage = this.getAttribute('data-page');
+                    
+                    // Update active nav link
+                    document.querySelectorAll('.nav-link').forEach(navLink => {
+                        navLink.classList.remove('active');
+                    });
+                    
+                    if (targetPage) {
+                        this.classList.add('active');
+                        
+                        // Hide all pages
+                        pages.forEach(page => {
+                            page.classList.remove('active');
+                        });
+                        
+                        // Show target page
+                        document.getElementById(`${targetPage}-page`).classList.add('active');
+                        
+                        // Scroll to top
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Set home as active initially
+            document.querySelector('.nav-link[data-page="home"]').classList.add('active');
+            
+            // Handle direct hash links
+            if (window.location.hash) {
+                const hash = window.location.hash.substring(1);
+                if (hash === 'download') {
+                    document.getElementById('home-page').classList.add('active');
+                    document.querySelector('.nav-link[data-page="home"]').classList.add('active');
+                    setTimeout(() => {
+                        document.getElementById(hash).scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }, 100);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
