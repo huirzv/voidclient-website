@@ -185,6 +185,14 @@
             background-clip: text;
         }
         
+        /* Button container in hero */
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
         /* Features section */
         .features {
             padding: 6rem 5%;
@@ -284,6 +292,29 @@
         
         .download-btn:active {
             transform: translateY(1px);
+        }
+        
+        /* Pro button style */
+        .pro-btn-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            color: white;
+            padding: 1.1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 1.5rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
+        }
+        
+        .pro-btn-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(156, 39, 176, 0.5);
         }
         
         .version-info {
@@ -432,6 +463,11 @@
             .section-title {
                 font-size: 2rem;
             }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
         }
         
         @media (max-width: 576px) {
@@ -451,7 +487,7 @@
                 font-size: 1rem;
             }
             
-            .download-btn {
+            .download-btn, .pro-btn-large {
                 padding: 1rem 2rem;
                 font-size: 1rem;
             }
@@ -501,9 +537,15 @@
                 <div class="hero-content">
                     <h1>Transform Your <strong>Minecraft Experience</strong></h1>
                     <p>Void Client offers ultimate customization, performance enhancements, a mod marketplace, and unique features to take your gameplay to the next level.</p>
-                    <a href="#download" class="download-btn">
-                        <i class="fas fa-download"></i> Download Now
-                    </a>
+                    
+                    <div class="hero-buttons">
+                        <a href="#download" class="download-btn">
+                            <i class="fas fa-download"></i> Download Now
+                        </a>
+                        <a href="https://voidclient.net/pro" class="pro-btn-large">
+                            <i class="fas fa-crown"></i> Get Void Pro
+                        </a>
+                    </div>
                 </div>
             </section>
             
@@ -564,9 +606,14 @@
                 <div class="download-content">
                     <h2 class="section-title">Ready to Begin?</h2>
                     <p>Join players who have already enhanced their Minecraft experience with Void Client.</p>
-                    <a href="https://github.com/voidclient/releases/latest" class="download-btn">
-                        <i class="fas fa-download"></i> Download Void Client
-                    </a>
+                    <div class="hero-buttons">
+                        <a href="https://github.com/voidclient/releases/latest" class="download-btn">
+                            <i class="fas fa-download"></i> Download Void Client
+                        </a>
+                        <a href="https://voidclient.net/pro" class="pro-btn-large">
+                            <i class="fas fa-crown"></i> Upgrade to Void Pro
+                        </a>
+                    </div>
                     <div class="version-info">
                         Version 2.1.4 | Compatible with Minecraft 1.8.9 - 1.20.1
                     </div>
@@ -596,6 +643,12 @@
                 
                 <h3 style="margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem;">Our Team</h3>
                 <p>Void Client is developed by a small team of passionate Minecraft players and developers who want to create the best possible client for the community. We're always listening to feedback and working to improve the client.</p>
+                
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="https://voidclient.net/pro" class="pro-btn-large">
+                        <i class="fas fa-crown"></i> Get Void Client Pro
+                    </a>
+                </div>
             </section>
         </div>
         
@@ -629,6 +682,12 @@
                 <h3 style="margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.5rem;">Reporting Issues</h3>
                 <p>If you encounter any bugs or issues with Void Client, please report them on our discord server.</p>
                 <p><a href="https://discord.gg/xS6bAbEYTY" style="color: var(--accent);">https://discord.gg/xS6bAbEYTY</a></p>
+                
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="https://voidclient.net/pro" class="pro-btn-large">
+                        <i class="fas fa-crown"></i> Upgrade to Void Pro
+                    </a>
+                </div>
             </section>
         </div>
     </main>
@@ -646,6 +705,7 @@
             <a href="#" data-page="about">About</a>
             <a href="#" data-page="support">Support</a>
             <a href="#download" data-page="home">Download</a>
+            <a href="https://voidclient.net/pro">Void Pro</a>
             <a href="https://github.com/voidclient">GitHub</a>
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>
@@ -674,6 +734,10 @@
             
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
+                    if (!this.hasAttribute('data-page') && !this.classList.contains('logo-container')) {
+                        return; // Skip links without data-page (like external links)
+                    }
+                    
                     e.preventDefault();
                     const targetPage = this.getAttribute('data-page');
                     
