@@ -79,6 +79,7 @@
             align-items: center;
             gap: 1rem;
             text-decoration: none;
+            z-index: 101;
         }
         
         .logo {
@@ -95,6 +96,17 @@
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+        
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 101;
         }
         
         nav ul {
@@ -468,17 +480,53 @@
                 flex-direction: column;
                 align-items: center;
             }
-        }
-        
-        @media (max-width: 576px) {
+            
+            /* Mobile menu styles */
+            .menu-toggle {
+                display: block;
+            }
+            
+            nav {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                max-width: 300px;
+                height: 100vh;
+                background: rgba(7, 7, 18, 0.98);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: var(--transition);
+                z-index: 100;
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            nav.active {
+                right: 0;
+            }
+            
             nav ul {
-                gap: 1rem;
+                flex-direction: column;
+                gap: 2rem;
+                padding: 2rem;
+                width: 100%;
             }
             
             nav a {
-                font-size: 0.95rem;
+                font-size: 1.2rem;
+                padding: 0.5rem 1rem;
+                display: block;
+                width: 100%;
             }
             
+            body.menu-open {
+                overflow: hidden;
+            }
+        }
+        
+        @media (max-width: 576px) {
             .hero h1 {
                 font-size: 2.2rem;
             }
@@ -519,7 +567,12 @@
             <img src="https://i.ibb.co/LdRyksm7/voltclient2-1.png" alt="Void Client Logo" class="logo">
             <span class="logo-text">Void Client</span>
         </a>
-        <nav>
+        
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <nav id="main-nav">
             <ul>
                 <li><a href="#" class="nav-link" data-page="home">Home</a></li>
                 <li><a href="#" class="nav-link" data-page="about">About</a></li>
@@ -728,11 +781,35 @@
                 }
             });
             
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const mainNav = document.getElementById('main-nav');
+            
+            menuToggle.addEventListener('click', function() {
+                mainNav.classList.toggle('active');
+                document.body.classList.toggle('menu-open');
+                menuToggle.innerHTML = mainNav.classList.contains('active') 
+                    ? '<i class="fas fa-times"></i>' 
+                    : '<i class="fas fa-bars"></i>';
+            });
+            
+            // Close menu when clicking on a nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        mainNav.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                    }
+                });
+            });
+            
             // Page navigation
-            const navLinks = document.querySelectorAll('.nav-link, .footer-links a, .logo-container');
+            const allNavLinks = document.querySelectorAll('.nav-link, .footer-links a, .logo-container');
             const pages = document.querySelectorAll('.page');
             
-            navLinks.forEach(link => {
+            allNavLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     if (!this.hasAttribute('data-page') && !this.classList.contains('logo-container')) {
                         return; // Skip links without data-page (like external links)
